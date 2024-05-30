@@ -13,6 +13,12 @@
 * ```/setu 美游 4张```
 * ```/setu 美游 4```
 
+## 环境变量
+`BAPICS_BLACK_LIST` : 黑名单群、用户
+`BAPICS_WHITE_LIST` : 白名单群、用户
+`BAPICS_RULE` : 选择使用白名单模式或黑名单模式，默认为黑名单模式，值为 `blacklist` 或 `whitelist` 之一
+`MAX_PICS` : 最大单次获取图片数量
+
 ## 目前可公开的情报：
 ```
 1. 支持群聊/私聊

@@ -1,5 +1,7 @@
 import os
 
+from nonebot import get_driver
+
 from pathlib import Path
 from typing import Any, List
 from pydantic import BaseModel, Extra
@@ -20,8 +22,11 @@ class Config(BaseModel, extra=Extra.ignore):
 PIC_DIR: Path = Path(os.path.dirname(os.path.abspath(__file__))).joinpath("./pics")
 DATABASE: Path = Path(os.path.dirname(
     os.path.abspath(__file__))).joinpath("./config.db")
-TAG: List[str] = ["BlueArchive | 碧蓝档案 | 蔚蓝档案 | ブルーアーカイブ | ブルアカ"]
-MAX_PICS = 5
+TAG: List[str] = config.get('tag', ["BlueArchive | 碧蓝档案 | 蔚蓝档案 | ブルーアーカイブ | ブルアカ"])
+MAX_PICS: int = config.get('max_pics', 5)
+BLACK_LIST: List[str] = config.get('bapics_black_list', [])
+WHITE_LIST: List[str] = config.get('bapics_white_list', [])
+RULE: str = config.get('bapics_rule', 'blacklist')
 HELP = """
 使用方法: 
     输入 /setu+[tag]+[x|X|*][num]+量词

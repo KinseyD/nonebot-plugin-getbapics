@@ -5,7 +5,7 @@ from nonebot.params import RegexDict
 from nonebot.plugin import PluginMetadata
 from nonebot.adapters.red import Bot, MessageEvent, MessageSegment
 
-from .config import HELP, MAX_PICS, Config
+from .config import HELP, MAX_PICS, RULE, BLACK_LIST, WHITE_LIST, Config
 from .utils import saveImage, check_database, update_database, update_optional_status
 
 
@@ -42,6 +42,14 @@ else:
 @get_a_image.handle()
 async def _(bot: Bot, event: MessageEvent, 
             regex_group: Annotated[dict[str, Any], RegexDict()]):
+    assert RULE == 'blacklist' or RULE == 'whitelist'
+    id: str = event.scene
+    if RULE == 'blacklist':
+        if id in BLACK_LIST:
+            await get_a_image.finish("未获得使用权限")
+    elif RULE == 'whitelist':
+        if id not in WHITE_LIST:
+            await get_a_image.finish("未获得使用权限")
     config = Config()
     args = dict(regex_group)
     logger.debug(args)
@@ -73,18 +81,25 @@ async def _(bot: Bot, event: MessageEvent,
 @status.handle()
 async def _(bot: Bot, event: MessageEvent, 
             regex_group: Annotated[dict[str, Any], RegexDict()]):
+    assert RULE == 'blacklist' or RULE == 'whitelist'
+    id: str = event.scene
+    if RULE == 'blacklist':
+        if id in BLACK_LIST:
+            await get_a_image.finish("未获得使用权限")
+    elif RULE == 'whitelist':
+        if id not in WHITE_LIST:
+            await get_a_image.finish("未获得使用权限")
     args = dict(regex_group)
     logger.debug(f"status={args}")
-    id = int(event.scene)
     logger.debug(event.scene)
     logger.debug(id)
     logger.debug(type(id))
     # 此处应该按照群组与好友进行鉴权处理，但是adapter-red没写获取发送者id的方法……
     if args["cmd"] == "open" or args["cmd"] == "开启":
-        await update_optional_status(1, args["tag"], id)
+        await update_optional_status(1, args["tag"], int(id))
         await bot.send(event, MessageSegment.text(f"{args['tag']}已开启！"))
     else:
-        await update_optional_status(0, args["tag"], id)
+        await update_optional_status(0, args["tag"], int(id))
         await bot.send(event, MessageSegment.text(f"{args['tag']}已关闭！"))
 
 @help.handle()
